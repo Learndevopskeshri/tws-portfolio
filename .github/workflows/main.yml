@@ -16,11 +16,9 @@ jobs:
     - name: Set up Azure CLI
       uses: azure/cli@v1
       with:
-        azcliversion: 2.38.0  # Specify the version you want, or use 'latest'
-
-    - name: Login to Azure
-      run: |
-        echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" > azure_connection_string.txt
-        az storage blob sync --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --container-name <your-container-name> --source ./ --delete-detected --recursive
+        inlineScript: |
+          # Login using the connection string
+          echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" > azure_connection_string.txt
+          az storage blob sync --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --container-name <your-container-name> --source ./ --delete-detected --recursive
       env:
         AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
