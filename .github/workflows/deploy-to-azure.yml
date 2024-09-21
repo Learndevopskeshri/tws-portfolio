@@ -1,0 +1,26 @@
+name: Deploy to Azure Storage
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch name if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/setup-cli@v1
+
+    - name: Login to Azure
+      run: |
+        echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" > azure_connection_string.txt
+        az storage account set-access-key --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_KEY }}
+      
+    - name: Sync files to Azure Storage
+      run: |
+        az storage blob sync --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --container-name <your-container-name> --source ./
