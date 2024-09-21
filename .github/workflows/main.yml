@@ -14,13 +14,13 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Azure CLI
-      uses: azure/setup-cli@v1
+      uses: azure/cli@v1
+      with:
+        azcliversion: 2.38.0  # Specify the version you want, or use 'latest'
 
     - name: Login to Azure
       run: |
         echo "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" > azure_connection_string.txt
-        az storage account set-access-key --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --account-key ${{ secrets.AZURE_STORAGE_KEY }}
-      
-    - name: Sync files to Azure Storage
-      run: |
-        az storage blob sync --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --container-name <your-container-name> --source ./
+        az storage blob sync --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} --container-name <your-container-name> --source ./ --delete-detected --recursive
+      env:
+        AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
